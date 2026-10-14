@@ -3,6 +3,8 @@ import logging
 import time
 from pathlib import Path
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 from src.models import ConcertEvent
 
@@ -10,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class TicketScraper:
-    def __init__(self, delay: float = 1.0):
+    def __init__(self, delay: float = 1.0, max_retries: int = 3):
         self.delay = delay
         self.session = requests.Session()
         self.session.headers.update({
@@ -20,6 +22,17 @@ class TicketScraper:
             ),
             "Accept-Language": "es-ES,es;q=0.9",
         })
+
+        # Estrategia de reintentos con Exponential Backoff ante caídas o rate-limiting
+        retry_strategy = Retry(
+            total=max_retries,
+            backoff_factor=1,  # Espera 1s, 2s, 4s...
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["GET"],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
 
     def fetch_page(self, url: str | None = None, local_file: str | None = None) -> str | None:
         """Obtiene el HTML desde una URL o desde un archivo local (modo offline/fallback)."""
