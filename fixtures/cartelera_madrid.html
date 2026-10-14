@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Conciertos - Madrid</title>
+    <!-- Datos estructurados Schema.org que usan portales como Dice, Wegow o SeeTickets -->
+    <script type="application/ld+json">
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "MusicEvent",
+        "identifier": "evt-001",
+        "name": "Vetusta Morla - Fin de Gira",
+        "startDate": "2026-11-15T21:00",
+        "location": {
+          "@type": "Place",
+          "name": "WiZink Center, Madrid"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "45.00",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://ejemplo-tickets.com/evento/vetusta-morla"
+        }
+      }
+    ]
+    </script>
+</head>
+<body>
+    <section id="cartelera">
+        <!-- Evento 1: Disponible con precio con coma y texto extra -->
+        <article class="event-card" data-event-id="evt-002">
+            <h3 class="event-artist">Carolina Durante</h3>
+            <p class="event-venue">La Riviera</p>
+            <time datetime="2026-11-22T20:30">22 Nov 2026</time>
+            <span class="event-price">Desde 35,00 € + gastos de gestión</span>
+            <span class="ticket-status">Entradas disponibles</span>
+            <a href="https://ejemplo-tickets.com/evento/carolina-durante">Comprar</a>
+        </article>
+
+        <!-- Evento 2: Últimas entradas -->
+        <article class="event-card" data-event-id="evt-003">
+            <h3 class="event-artist">Alcalá Norte</h3>
+            <p class="event-venue">Sala El Sol</p>
+            <time datetime="2026-12-05T21:30">05 Dic 2026</time>
+            <span class="event-price">18,00 €</span>
+            <span class="ticket-status">Agotado</span>
+            <a href="https://ejemplo-tickets.com/evento/alcala-norte">Comprar</a>
+        </article>
+
+        <!-- Evento 3: Agotado (Sold Out) sin precio numérico -->
+        <article class="event-card" data-event-id="evt-004">
+            <h3 class="event-artist">Arde Bogotá</h3>
+            <p class="event-venue">WiZink Center, Madrid</p>
+            <time datetime="2026-12-18T21:00">18 Dic 2026</time>
+            <span class="event-price">No disponible</span>
+            <span class="ticket-status">Sold Out / Agotado</span>
+            <a href="https://ejemplo-tickets.com/evento/arde-bogota">Ver evento</a>
+        </article>
+
+        <!-- Evento 4: Registro corrupto/incompleto (falta artista) para probar tolerancia a fallos -->
+        <article class="event-card" data-event-id="evt-corrupto">
+            <p class="event-venue">Sala But</p>
+        </article>
+    </section>
+</body>
+</html>
