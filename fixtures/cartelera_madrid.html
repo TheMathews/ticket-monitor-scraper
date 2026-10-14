@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Agenda de Conciertos - Madrid</title>
-    <!-- Datos estructurados Schema.org que usan portales como Dice, Wegow o SeeTickets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LivePass Madrid | Agenda de Conciertos y Entradas</title>
+
     <script type="application/ld+json">
     [
       {
@@ -26,43 +27,317 @@
       }
     ]
     </script>
+
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #181b24;
+            --card-border: #262b38;
+            --text: #f3f4f6;
+            --muted: #9ca3af;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 4rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f1117 100%);
+            border-bottom: 1px solid var(--card-border);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+        }
+
+        .brand {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto 1.5rem; }
+
+        .controls {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-input {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            padding: 0.65rem 1rem;
+            border-radius: 0.5rem;
+            width: 280px;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--muted);
+            padding: 0.65rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .featured-banner {
+            background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, rgba(24,27,36,0.9) 100%);
+            border: 1px solid rgba(99,102,241,0.4);
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .featured-tag {
+            font-size: 0.75rem;
+            background: rgba(99,102,241,0.25);
+            color: #a5b4fc;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+        }
+
+        #cartelera {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .event-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-3px);
+            border-color: #3f475e;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+        }
+
+        .event-artist { font-size: 1.25rem; font-weight: 700; }
+        .event-venue { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.4rem; }
+
+        time {
+            display: inline-block;
+            font-size: 0.82rem;
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.12);
+            padding: 0.2rem 0.55rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .ticket-status {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .status-available { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+        .status-low { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
+        .status-soldout { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+
+        .card-footer {
+            border-top: 1px solid var(--card-border);
+            padding-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .event-price { font-weight: 700; font-size: 0.95rem; }
+
+        .btn-buy {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-buy:hover { background: var(--accent-hover); }
+        .btn-disabled {
+            background: #262b38;
+            color: var(--muted);
+        }
+
+        .mystery-card {
+            border-style: dashed;
+            opacity: 0.75;
+        }
+    </style>
 </head>
 <body>
-    <section id="cartelera">
-        <!-- Evento 1: Disponible con precio con coma y texto extra -->
-        <article class="event-card" data-event-id="evt-002">
-            <h3 class="event-artist">Carolina Durante</h3>
-            <p class="event-venue">La Riviera</p>
-            <time datetime="2026-11-22T20:30">22 Nov 2026</time>
-            <span class="event-price">Desde 35,00 € + gastos de gestión</span>
-            <span class="ticket-status">Entradas disponibles</span>
-            <a href="https://ejemplo-tickets.com/evento/carolina-durante">Comprar</a>
-        </article>
 
-        <!-- Evento 2: Últimas entradas -->
-        <article class="event-card" data-event-id="evt-003">
-            <h3 class="event-artist">Alcalá Norte</h3>
-            <p class="event-venue">Sala El Sol</p>
-            <time datetime="2026-12-05T21:30">05 Dic 2026</time>
-            <span class="event-price">18,00 €</span>
-            <span class="ticket-status">Agotado</span>
-            <a href="https://ejemplo-tickets.com/evento/alcala-norte">Comprar</a>
-        </article>
+    <header>
+        <div class="brand">LivePass Madrid</div>
+        <h1>Agenda de Conciertos — Madrid</h1>
+        <p class="subtitle">Descubre los próximos directos en salas y recintos de la ciudad</p>
 
-        <!-- Evento 3: Agotado (Sold Out) sin precio numérico -->
-        <article class="event-card" data-event-id="evt-004">
-            <h3 class="event-artist">Arde Bogotá</h3>
-            <p class="event-venue">WiZink Center, Madrid</p>
-            <time datetime="2026-12-18T21:00">18 Dic 2026</time>
-            <span class="event-price">No disponible</span>
-            <span class="ticket-status">Sold Out / Agotado</span>
-            <a href="https://ejemplo-tickets.com/evento/arde-bogota">Ver evento</a>
-        </article>
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar artista o recinto...">
+            <button class="filter-btn active" onclick="filterCards('all', this)">Todos</button>
+            <button class="filter-btn" onclick="filterCards('available', this)">Disponibles</button>
+            <button class="filter-btn" onclick="filterCards('low', this)">Últimas entradas</button>
+            <button class="filter-btn" onclick="filterCards('soldout', this)">Agotados</button>
+        </div>
+    </header>
 
-        <!-- Evento 4: Registro corrupto/incompleto (falta artista) para probar tolerancia a fallos -->
-        <article class="event-card" data-event-id="evt-corrupto">
-            <p class="event-venue">Sala But</p>
-        </article>
-    </section>
+    <main class="container">
+        <div class="featured-banner">
+            <div>
+                <span class="featured-tag">★ Concierto Destacado</span>
+                <h2>Vetusta Morla - Fin de Gira</h2>
+                <p style="color: var(--muted); font-size: 0.9rem;">📍 WiZink Center, Madrid · 📅 15 Nov 2026 (21:00h) · 💶 45,00 €</p>
+            </div>
+            <span class="ticket-status status-available">Entradas disponibles</span>
+        </div>
+
+        <section id="cartelera">
+            <article class="event-card" data-event-id="evt-002" data-category="available">
+                <div>
+                    <div class="card-header">
+                        <h3 class="event-artist">Carolina Durante</h3>
+                        <span class="ticket-status status-available">Entradas disponibles</span>
+                    </div>
+                    <p class="event-venue">📍 La Riviera</p>
+                    <time datetime="2026-11-22T20:30">📅 22 Nov 2026 · 20:30h</time>
+                </div>
+                <div class="card-footer">
+                    <span class="event-price">Desde 28,50 € + gastos de gestión</span>
+                    <a class="btn-buy" href="https://ejemplo-tickets.com/evento/carolina-durante">Comprar</a>
+                </div>
+            </article>
+
+            <article class="event-card" data-event-id="evt-003" data-category="low">
+                <div>
+                    <div class="card-header">
+                        <h3 class="event-artist">Alcalá Norte</h3>
+                        <span class="ticket-status status-low">¡Últimas entradas!</span>
+                    </div>
+                    <p class="event-venue">📍 Sala El Sol</p>
+                    <time datetime="2026-12-05T21:30">📅 05 Dic 2026 · 21:30h</time>
+                </div>
+                <div class="card-footer">
+                    <span class="event-price">18,00 €</span>
+                    <a class="btn-buy" href="https://ejemplo-tickets.com/evento/alcala-norte">Comprar</a>
+                </div>
+            </article>
+
+            <article class="event-card" data-event-id="evt-004" data-category="soldout">
+                <div>
+                    <div class="card-header">
+                        <h3 class="event-artist">Arde Bogotá</h3>
+                        <span class="ticket-status status-soldout">Sold Out / Agotado</span>
+                    </div>
+                    <p class="event-venue">📍 WiZink Center, Madrid</p>
+                    <time datetime="2026-12-18T21:00">📅 18 Dic 2026 · 21:00h</time>
+                </div>
+                <div class="card-footer">
+                    <span class="event-price">No disponible</span>
+                    <a class="btn-buy btn-disabled" href="https://ejemplo-tickets.com/evento/arde-bogota">Ver evento</a>
+                </div>
+            </article>
+
+            <article class="event-card mystery-card" data-event-id="evt-corrupto" data-category="all">
+                <div>
+                    <div class="card-header">
+                        <h4 style="color: var(--muted);">🔒 Artista Invitado (Por confirmar)</h4>
+                        <span class="ticket-status" style="background: #262b38; color: var(--muted);">Próximamente</span>
+                    </div>
+                    <p class="event-venue">📍 Sala But</p>
+                    <p style="font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem;">
+                        El cartel se desvelará próximamente. Venta de entradas aún no activa.
+                    </p>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.event-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        });
+
+        function filterCards(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
