@@ -1,5 +1,7 @@
+import sqlite3
 from src.models import ConcertEvent, TicketStatus
 from src.scraper import TicketScraper
+from src.storage import TicketStorage
 
 
 def test_price_and_status_normalization():
@@ -36,8 +38,43 @@ def test_hybrid_html_and_json_ld_parsing():
     assert html is not None
 
     events = scraper.parse_all_events(html)
-    # Deben salir 4 eventos válidos y descartarse el evento corrupto sin lanzar excepción
     assert len(events) == 4
     artists = {e.artist for e in events}
     assert "Vetusta Morla - Fin de Gira" in artists
     assert "Carolina Durante" in artists
+
+
+def test_sqlite_upsert_and_history_audit(tmp_path):
+    storage = TicketStorage(data_dir=str(tmp_path))
+
+    # 1ª ejecución: el concierto sale a la venta a 25€
+    initial_event = ConcertEvent(
+        event_id="evt-999",
+        artist="Artista Test",
+        venue="Sala Test",
+        event_date="2026-12-01",
+        price_eur=25.0,
+        status=TicketStatus.AVAILABLE,
+        url="https://ejemplo.com/999",
+    )
+    storage.upsert_to_sqlite([initial_event])
+
+    # 2ª ejecución: sube a 30€ y pasa a últimas entradas
+    updated_event = ConcertEvent(
+        event_id="evt-999",
+        artist="Artista Test",
+        venue="Sala Test",
+        event_date="2026-12-01",
+        price_eur=30.0,
+        status=TicketStatus.LOW_TICKETS,
+        url="https://ejemplo.com/999",
+    )
+    storage.upsert_to_sqlite([updated_event])
+
+    # Comprobar que la tabla event_history ha registrado el cambio
+    with sqlite3.connect(storage.db_path) as conn:
+        row = conn.execute(
+            "SELECT old_price, new_price, old_status, new_status FROM event_history WHERE event_id = 'evt-999'"
+        ).fetchone()
+
+    assert row == (25.0, 30.0, "AVAILABLE", "LOW_TICKETS")
