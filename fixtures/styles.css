@@ -1,0 +1,325 @@
+:root {
+    --bg: #0f1117;
+    --card-bg: #181b24;
+    --card-border: #262b38;
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding-bottom: 4rem;
+}
+
+header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f1117 100%);
+    border-bottom: 1px solid var(--card-border);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+
+.brand {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+
+.controls {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.search-input {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 0.65rem 1rem;
+    border-radius: 0.5rem;
+    width: 280px;
+    font-size: 0.9rem;
+}
+
+.filter-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    padding: 0.65rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.featured-banner {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(24, 27, 36, 0.9) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.featured-banner:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.featured-tag {
+    font-size: 0.75rem;
+    background: rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 0.4rem;
+}
+
+#cartelera {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.5rem;
+}
+
+.event-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.event-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+}
+
+.event-artist {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.event-venue {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+time {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.12);
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.35rem;
+    margin-bottom: 1.25rem;
+}
+
+.ticket-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.status-available {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--green);
+}
+
+.status-low {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--amber);
+}
+
+.status-soldout {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--red);
+}
+
+.card-footer {
+    border-top: 1px solid var(--card-border);
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.event-price {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.btn-buy {
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-buy:hover {
+    background: var(--accent-hover);
+}
+
+.btn-disabled {
+    background: #262b38;
+    color: var(--muted);
+}
+
+.mystery-card {
+    border-style: dashed;
+    opacity: 0.75;
+}
+
+/* Modal de detalles del concierto */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 1000;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.85rem;
+    max-width: 520px;
+    width: 100%;
+    padding: 1.75rem;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--text);
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0.5rem 0 0.75rem;
+}
+
+.modal-desc {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-bottom: 1.25rem;
+}
+
+.modal-specs {
+    background: var(--bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.6rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.spec-item span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.spec-item strong {
+    font-size: 0.92rem;
+    color: var(--text);
+}

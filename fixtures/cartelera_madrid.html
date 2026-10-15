@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LivePass Madrid | Agenda de Conciertos y Entradas</title>
+    <link rel="stylesheet" href="styles.css">
 
     <script type="application/ld+json">
     [
@@ -27,206 +28,6 @@
       }
     ]
     </script>
-
-    <style>
-        :root {
-            --bg: #0f1117;
-            --card-bg: #181b24;
-            --card-border: #262b38;
-            --text: #f3f4f6;
-            --muted: #9ca3af;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --green: #10b981;
-            --amber: #f59e0b;
-            --red: #ef4444;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            padding-bottom: 4rem;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e1b4b 0%, #0f1117 100%);
-            border-bottom: 1px solid var(--card-border);
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-        }
-
-        .brand {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--accent);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto 1.5rem; }
-
-        .controls {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .search-input {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            padding: 0.65rem 1rem;
-            border-radius: 0.5rem;
-            width: 280px;
-            font-size: 0.9rem;
-        }
-
-        .filter-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--muted);
-            padding: 0.65rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-
-        .featured-banner {
-            background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, rgba(24,27,36,0.9) 100%);
-            border: 1px solid rgba(99,102,241,0.4);
-            border-radius: 0.75rem;
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .featured-tag {
-            font-size: 0.75rem;
-            background: rgba(99,102,241,0.25);
-            color: #a5b4fc;
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 0.4rem;
-        }
-
-        #cartelera {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .event-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .event-card:hover {
-            transform: translateY(-3px);
-            border-color: #3f475e;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            gap: 0.5rem;
-        }
-
-        .event-artist { font-size: 1.25rem; font-weight: 700; }
-        .event-venue { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.4rem; }
-
-        time {
-            display: inline-block;
-            font-size: 0.82rem;
-            color: #a5b4fc;
-            background: rgba(99, 102, 241, 0.12);
-            padding: 0.2rem 0.55rem;
-            border-radius: 0.35rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .ticket-status {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.25rem 0.6rem;
-            border-radius: 999px;
-            white-space: nowrap;
-        }
-
-        .status-available { background: rgba(16, 185, 129, 0.15); color: var(--green); }
-        .status-low { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
-        .status-soldout { background: rgba(239, 68, 68, 0.15); color: var(--red); }
-
-        .card-footer {
-            border-top: 1px solid var(--card-border);
-            padding-top: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .event-price { font-weight: 700; font-size: 0.95rem; }
-
-        .btn-buy {
-            background: var(--accent);
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.4rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .btn-buy:hover { background: var(--accent-hover); }
-        .btn-disabled {
-            background: #262b38;
-            color: var(--muted);
-        }
-
-        .mystery-card {
-            border-style: dashed;
-            opacity: 0.75;
-        }
-    </style>
 </head>
 <body>
 
@@ -245,7 +46,16 @@
     </header>
 
     <main class="container">
-        <div class="featured-banner">
+        <div class="featured-banner"
+             onclick="openModal(this)"
+             data-title="Vetusta Morla - Fin de Gira"
+             data-venue="WiZink Center, Madrid"
+             data-date="15 Nov 2026 · 21:00h"
+             data-doors="19:30h"
+             data-capacity="17.453 personas (Pista y Grada)"
+             data-price="45,00 €"
+             data-status="Entradas disponibles"
+             data-desc="Concierto especial de cierre de etapa de la banda madrileña en formato de recinto completo, repasando los temas clave de su discografía.">
             <div>
                 <span class="featured-tag">★ Concierto Destacado</span>
                 <h2>Vetusta Morla - Fin de Gira</h2>
@@ -255,7 +65,18 @@
         </div>
 
         <section id="cartelera">
-            <article class="event-card" data-event-id="evt-002" data-category="available">
+            <article class="event-card"
+                     data-event-id="evt-002"
+                     data-category="available"
+                     onclick="openModal(this)"
+                     data-title="Carolina Durante"
+                     data-venue="La Riviera"
+                     data-date="22 Nov 2026 · 20:30h"
+                     data-doors="19:00h"
+                     data-capacity="2.500 personas"
+                     data-price="Desde 28,50 € + gastos"
+                     data-status="Entradas disponibles"
+                     data-desc="Presentación en directo de su nuevo álbum de estudio en Madrid dentro de su gira nacional de salas. Entrada general de pista.">
                 <div>
                     <div class="card-header">
                         <h3 class="event-artist">Carolina Durante</h3>
@@ -270,7 +91,18 @@
                 </div>
             </article>
 
-            <article class="event-card" data-event-id="evt-003" data-category="low">
+            <article class="event-card"
+                     data-event-id="evt-003"
+                     data-category="low"
+                     onclick="openModal(this)"
+                     data-title="Alcalá Norte"
+                     data-venue="Sala El Sol"
+                     data-date="05 Dic 2026 · 21:30h"
+                     data-doors="20:30h"
+                     data-capacity="300 personas (Aforo reducido)"
+                     data-price="18,00 €"
+                     data-status="¡Últimas entradas!"
+                     data-desc="Directo especial en formato sala reducida presentando los temas de su disco debut homónimo. Quedan menos del 10% de localidades.">
                 <div>
                     <div class="card-header">
                         <h3 class="event-artist">Alcalá Norte</h3>
@@ -285,7 +117,18 @@
                 </div>
             </article>
 
-            <article class="event-card" data-event-id="evt-004" data-category="soldout">
+            <article class="event-card"
+                     data-event-id="evt-004"
+                     data-category="soldout"
+                     onclick="openModal(this)"
+                     data-title="Arde Bogotá"
+                     data-venue="WiZink Center, Madrid"
+                     data-date="18 Dic 2026 · 21:00h"
+                     data-doors="19:30h"
+                     data-capacity="17.453 personas (Aforo completo)"
+                     data-price="No disponible"
+                     data-status="Sold Out / Agotado"
+                     data-desc="Noche de clausura de su gira con producción escénica completa. Todas las localidades de pista y grada se encuentran agotadas.">
                 <div>
                     <div class="card-header">
                         <h3 class="event-artist">Arde Bogotá</h3>
@@ -300,7 +143,18 @@
                 </div>
             </article>
 
-            <article class="event-card mystery-card" data-event-id="evt-corrupto" data-category="all">
+            <article class="event-card mystery-card"
+                     data-event-id="evt-corrupto"
+                     data-category="all"
+                     onclick="openModal(this)"
+                     data-title="Artista Invitado (Por confirmar)"
+                     data-venue="Sala But"
+                     data-date="Fecha por anunciar"
+                     data-doors="Por confirmar"
+                     data-capacity="1.000 personas"
+                     data-price="Venta no activa"
+                     data-status="Próximamente"
+                     data-desc="Sesión secreta del ciclo de otoño. El nombre de la banda invitada se desvelará 48 horas antes de la apertura de puertas.">
                 <div>
                     <div class="card-header">
                         <h4 style="color: var(--muted);">🔒 Artista Invitado (Por confirmar)</h4>
@@ -315,9 +169,54 @@
         </section>
     </main>
 
+    <!-- Ventana modal de información del concierto -->
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <span id="modalStatus" class="featured-tag">Estado</span>
+            <h2 id="modalTitle" class="modal-title">Artista</h2>
+            <p id="modalDesc" class="modal-desc">Descripción del evento</p>
+
+            <div class="modal-specs">
+                <div class="spec-item">
+                    <span>Recinto</span>
+                    <strong id="modalVenue">-</strong>
+                </div>
+                <div class="spec-item">
+                    <span>Aforo del recinto</span>
+                    <strong id="modalCapacity">-</strong>
+                </div>
+                <div class="spec-item">
+                    <span>Fecha y hora</span>
+                    <strong id="modalDate">-</strong>
+                </div>
+                <div class="spec-item">
+                    <span>Apertura de puertas</span>
+                    <strong id="modalDoors">-</strong>
+                </div>
+                <div class="spec-item">
+                    <span>Precio entrada</span>
+                    <strong id="modalPrice">-</strong>
+                </div>
+                <div class="spec-item">
+                    <span>Política de acceso</span>
+                    <strong>Mayores de 16 años</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const searchInput = document.getElementById('searchInput');
         const cards = document.querySelectorAll('.event-card');
+        const modal = document.getElementById('eventModal');
+
+        // Evitar que los enlaces <a> lleven a una URL rota al hacer clic
+        document.querySelectorAll('.btn-buy').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+        });
 
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
@@ -338,6 +237,26 @@
                 }
             });
         }
+
+        function openModal(element) {
+            document.getElementById('modalTitle').innerText = element.dataset.title;
+            document.getElementById('modalDesc').innerText = element.dataset.desc;
+            document.getElementById('modalVenue').innerText = element.dataset.venue;
+            document.getElementById('modalCapacity').innerText = element.dataset.capacity;
+            document.getElementById('modalDate').innerText = element.dataset.date;
+            document.getElementById('modalDoors').innerText = element.dataset.doors;
+            document.getElementById('modalPrice').innerText = element.dataset.price;
+            document.getElementById('modalStatus').innerText = element.dataset.status;
+            modal.classList.add('open');
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
     </script>
 </body>
 </html>
