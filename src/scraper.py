@@ -12,9 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 class TicketScraper:
+    """
+    Cliente HTTP resiliente y parser híbrido (JSON-LD + BeautifulSoup)
+    para extraer eventos musicales desde portales de ticketing.
+    """
+
     def __init__(self, delay: float = 1.0, max_retries: int = 3):
+        """
+        Inicializa la sesión HTTP reutilizable, define cabeceras de navegador real
+        y configura la política de reintentos automáticos (Exponential Backoff).
+        """
         self.delay = delay
         self.session = requests.Session()
+
+        # Cabeceras para simular un navegador estándar y recibir contenido en español
         self.session.headers.update({
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -23,10 +34,10 @@ class TicketScraper:
             "Accept-Language": "es-ES,es;q=0.9",
         })
 
-        # Estrategia de reintentos con Exponential Backoff ante caídas o rate-limiting
+        # Estrategia de reintentos: si el servidor da error 429 o 5xx, espera 1s, 2s y 4s
         retry_strategy = Retry(
             total=max_retries,
-            backoff_factor=1,  # Espera 1s, 2s, 4s...
+            backoff_factor=1,
             status_forcelist=[429, 500, 502, 503, 504],
             allowed_methods=["GET"],
         )
@@ -35,7 +46,11 @@ class TicketScraper:
         self.session.mount("https://", adapter)
 
     def fetch_page(self, url: str | None = None, local_file: str | None = None) -> str | None:
-        """Obtiene el HTML desde una URL o desde un archivo local (modo offline/fallback)."""
+        """
+        Obtiene el código fuente HTML ya sea desde un archivo local (modo demo/offline)
+        o realizando una petición HTTP GET con control de tiempo de espera (timeout).
+        """
+        # 1. Si se indica archivo local, leer desde disco
         if local_file:
             path = Path(local_file)
             if path.exists():
@@ -47,6 +62,7 @@ class TicketScraper:
         if not url:
             return None
 
+        # 2. Si se indica URL, descargar por red aplicando pausa ética (rate limiting)
         try:
             logger.info(f"Descargando cartelera desde: {url}")
             response = self.session.get(url, timeout=10)
@@ -58,7 +74,10 @@ class TicketScraper:
             return None
 
     def parse_all_events(self, html: str) -> list[ConcertEvent]:
-        """Combina eventos extraídos por JSON-LD y por tarjetas HTML sin duplicarlos."""
+        """
+        Orquesta la extracción combinando metadatos JSON-LD y tarjetas HTML.
+        Usa un diccionario indexado por 'event_id' para evitar eventos duplicados.
+        """
         events_by_id: dict[str, ConcertEvent] = {}
 
         for event in self._parse_json_ld(html) + self._parse_html_cards(html):
@@ -67,7 +86,10 @@ class TicketScraper:
         return list(events_by_id.values())
 
     def _parse_json_ld(self, html: str) -> list[ConcertEvent]:
-        """Extrae eventos de etiquetas <script type='application/ld+json'>."""
+        """
+        Busca bloques <script type='application/ld+json'> con formato Schema.org.
+        Es la fuente más estable en portales de entradas porque la usan para SEO en Google.
+        """
         soup = BeautifulSoup(html, "html.parser")
         events: list[ConcertEvent] = []
 
@@ -76,13 +98,16 @@ class TicketScraper:
                 continue
             try:
                 data = json.loads(script.string)
+                # El JSON-LD puede venir como un único objeto o como una lista de objetos
                 items = data if isinstance(data, list) else [data]
+
                 for item in items:
                     if item.get("@type") in ("Event", "MusicEvent"):
                         offers = item.get("offers", {})
                         if isinstance(offers, list):
                             offers = offers[0] if offers else {}
 
+                        # Instanciar y validar el evento con Pydantic
                         event = ConcertEvent(
                             event_id=str(item.get("identifier") or item.get("url")),
                             artist=item.get("name", ""),
@@ -99,12 +124,16 @@ class TicketScraper:
         return events
 
     def _parse_html_cards(self, html: str) -> list[ConcertEvent]:
-        """Extrae eventos de las tarjetas visuales <article class='event-card'>."""
+        """
+        Extrae conciertos desde las tarjetas visuales <article class='event-card'>.
+        Si una tarjeta está incompleta o corrupta, registra un WARNING y continúa con el resto.
+        """
         soup = BeautifulSoup(html, "html.parser")
         events: list[ConcertEvent] = []
 
         for card in soup.select("article.event-card"):
             try:
+                # Localizar selectores CSS dentro de la tarjeta
                 event_id = card.get("data-event-id", "")
                 artist_el = card.select_one(".event-artist")
                 venue_el = card.select_one(".event-venue")
@@ -113,6 +142,7 @@ class TicketScraper:
                 status_el = card.select_one(".ticket-status")
                 link_el = card.select_one("a")
 
+                # Comprobar que existen los datos mínimos obligatorios antes de validar
                 if not (artist_el and venue_el and link_el):
                     raise ValueError("Faltan campos obligatorios (artista, recinto o enlace)")
 

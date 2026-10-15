@@ -4,6 +4,7 @@ from src.models import TicketStatus
 from src.scraper import TicketScraper
 from src.storage import TicketStorage
 
+# Configuración global de logs con hora, nivel y módulo
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -13,6 +14,7 @@ logger = logging.getLogger("main")
 
 
 def parse_args() -> argparse.Namespace:
+    """Define y procesa los argumentos disponibles por línea de comandos (CLI)."""
     parser = argparse.ArgumentParser(
         description="Monitor de Conciertos y Disponibilidad de Entradas"
     )
@@ -43,10 +45,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """
+    Flujo principal del pipeline ETL:
+    1. Extracción (URL remota o maqueta HTML local).
+    2. Transformación/Validación (Pydantic + filtros opcionales por CLI).
+    3. Carga (SQLite con historial de cambios y exportación a CSV).
+    """
     args = parse_args()
     scraper = TicketScraper(delay=1.0)
     storage = TicketStorage(data_dir="data")
 
+    # Paso 1: Obtener el HTML desde la URL o desde el archivo local
     if args.url:
         html = scraper.fetch_page(url=args.url)
     else:
@@ -56,9 +65,11 @@ def main() -> None:
         logger.error("No se pudo obtener contenido HTML. Abortando ejecución.")
         return
 
+    # Paso 2: Extraer y validar todos los eventos encontrados
     events = scraper.parse_all_events(html)
     logger.info(f"Extraídos y validados {len(events)} eventos del HTML.")
 
+    # Aplicar filtros opcionales si el usuario los indicó por consola
     if args.only_available:
         events = [e for e in events if e.status != TicketStatus.SOLD_OUT]
         logger.info(f"Filtro --only-available activo: quedan {len(events)} eventos con entradas.")
@@ -70,6 +81,7 @@ def main() -> None:
         ]
         logger.info(f"Filtro --max-price ({args.max_price}€) activo: quedan {len(events)} eventos.")
 
+    # Paso 3: Guardar resultados en SQLite (auditando cambios) y exportar CSV
     storage.upsert_to_sqlite(events)
     storage.export_to_csv(events)
 

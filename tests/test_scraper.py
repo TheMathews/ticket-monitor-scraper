@@ -5,6 +5,7 @@ from src.storage import TicketStorage
 
 
 def test_price_and_status_normalization():
+    """Verifica que Pydantic limpia precios con coma/texto y normaliza el estado."""
     event = ConcertEvent(
         event_id="evt-100",
         artist="Banda de Prueba",
@@ -19,6 +20,7 @@ def test_price_and_status_normalization():
 
 
 def test_sold_out_without_numeric_price():
+    """Verifica que un evento agotado sin precio numérico asigna None a price_eur."""
     event = ConcertEvent(
         event_id="evt-101",
         artist="Banda Agotada",
@@ -33,6 +35,10 @@ def test_sold_out_without_numeric_price():
 
 
 def test_hybrid_html_and_json_ld_parsing():
+    """
+    Comprueba que el scraper extrae tanto el evento JSON-LD como las tarjetas HTML
+    válidas y descarta el registro incompleto ('evt-corrupto') sin lanzar excepción.
+    """
     scraper = TicketScraper()
     html = scraper.fetch_page(local_file="fixtures/cartelera_madrid.html")
     assert html is not None
@@ -45,6 +51,10 @@ def test_hybrid_html_and_json_ld_parsing():
 
 
 def test_sqlite_upsert_and_history_audit(tmp_path):
+    """
+    Usa una base de datos temporal aislada (tmp_path) para comprobar que al cambiar
+    el precio y estado de un concierto se registra el historial en 'event_history'.
+    """
     storage = TicketStorage(data_dir=str(tmp_path))
 
     # 1ª ejecución: el concierto sale a la venta a 25€
@@ -71,7 +81,7 @@ def test_sqlite_upsert_and_history_audit(tmp_path):
     )
     storage.upsert_to_sqlite([updated_event])
 
-    # Comprobar que la tabla event_history ha registrado el cambio
+    # Comprobar que la tabla event_history ha auditado el cambio correctamente
     with sqlite3.connect(storage.db_path) as conn:
         row = conn.execute(
             "SELECT old_price, new_price, old_status, new_status FROM event_history WHERE event_id = 'evt-999'"
